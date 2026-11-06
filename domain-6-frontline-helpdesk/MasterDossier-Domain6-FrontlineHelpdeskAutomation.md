@@ -1,14 +1,4 @@
-# Master Flagship Dossier: Domain 6 — Frontline Helpdesk Automation & HTTP Webhook Actions
-
-```
-Document ID:     DOSSIER-DOM-06-HELPDESK-AUTOMATION
-Target Store:    Synapse Botanicals (DTC E-Commerce, Shopify Plus)
-Architecture:    Bi-Directional Helpdesk API Integration, Zero-Latency Triage, & Fulfillment Holds
-Core Systems:    Gorgias Helpdesk Academy, Shopify Fulfillment Orders API, ShipBob WMS, Webhook HTTP Actions
-Response SLA:    First-Response Time < 15m (down from 4.2h) | Zero-Latency Hold Execution < 10s
-Classification:  Enterprise Technical Operations & Customer Support Systems Specification
-Compiled From:   SOP-HelpdeskOperationsAndMacroAutomation-Parent.md
-```
+# Frontline Helpdesk Automation & HTTP Webhook Actions
 
 ---
 
@@ -82,16 +72,27 @@ Headers:
 
 To maintain perfect synchronization between Gorgias tickets and Shopify Admin, a controlled tag lifecycle was established:
 
-```
-┌─────────────────────────┬─────────────────────────┬─────────────────────────────────────────────────────────┐
-│ Customer Support Intent │ Shopify Order Tag Added │ Automated Backend Action                                │
-├─────────────────────────┼─────────────────────────┼─────────────────────────────────────────────────────────┤
-│ "Urgent Address Change" │ `CS-ADDR-HOLD`         │ Fires Fulfillment Hold; sets priority to High in Gorgias│
-│ "Cancel Request"        │ `CS-CANCEL-PENDING`    │ Checks PONR status; blocks warehouse wave pick          │
-│ "Flavor / Item Swap"    │ `CS-SWAP-REVIEW`       │ Verifies ATS inventory $ge 5$ units at target node     │
-│ "Damaged / Defect Claim"│ `CS-CLAIM-VERIFIED`    │ Triggers replacement order in Shopify Flow              │
-│ "Carrier Delivery Delay"│ `CS-CARRIER-ESCALATE`  │ Files automated synthetic tracing claim with UPS/USPS   │
-└─────────────────────────┴─────────────────────────┴─────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    I1["Intent: Urgent Address Change
+    Tag: CS-ADDR-HOLD"] --> A1["Fire Fulfillment Hold
+    Set Priority: High in Gorgias"]
+
+    I2["Intent: Cancel Request
+    Tag: CS-CANCEL-PENDING"] --> A2["Check PONR Status
+    Block warehouse wave pick"]
+
+    I3["Intent: Flavor / Item Swap
+    Tag: CS-SWAP-REVIEW"] --> A3["Verify ATS inventory ≥ 5 units
+    at target node"]
+
+    I4["Intent: Damaged / Defect Claim
+    Tag: CS-CLAIM-VERIFIED"] --> A4["Trigger replacement order
+    via Shopify Flow"]
+
+    I5["Intent: Carrier Delivery Delay
+    Tag: CS-CARRIER-ESCALATE"] --> A5["File automated synthetic
+    tracing claim with UPS / USPS"]
 ```
 
 ---
@@ -145,20 +146,25 @@ To maintain perfect synchronization between Gorgias tickets and Shopify Admin, a
 
 To eliminate recurring operational defects, a weekly closed-loop RCA protocol was established between Customer Support and TechOps:
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     CS-TO-TECHOPS ESCALATION LADDER                     │
-├─────────────────────────────────────────────────────────────────────────┤
-│ Tier 1: Frontline Agents                                                │
-│ • Routine address updates, tracking inquiries, pre-PONR cancellations   │
-│                                                                         │
-│ Tier 2: Senior Support Specialists                                      │
-│ • Post-PONR carrier package intercepts, damaged item claims, FDA scrap  │
-│                                                                         │
-│ Tier 3: Technical Operations Lead                                       │
-│ • Systemic API webhook failures (HTTP 504), inventory desyncs, checkout │
-│   discount collisions, and carrier service level breaches              │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    T1["**Tier 1 — Frontline Agents**
+    Routine address updates
+    Tracking inquiries
+    Pre-PONR cancellations"]
+
+    T2["**Tier 2 — Senior Support Specialists**
+    Post-PONR carrier package intercepts
+    Damaged item claims
+    FDA consumable scrap processing"]
+
+    T3["**Tier 3 — Technical Operations Lead**
+    Systemic API webhook failures (HTTP 504)
+    Inventory desyncs
+    Checkout discount collisions
+    Carrier service level breaches"]
+
+    T1 --> T2 --> T3
 ```
 
 ### 6.1 Weekly Defect Review Metrics (Key Performance Indicators)

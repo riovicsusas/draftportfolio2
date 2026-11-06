@@ -1,16 +1,4 @@
-# Master Flagship Dossier: Domain 2 — Bi-Coastal Multi-Node Logistics & Freight Cost Optimization
-
-```
-Document ID:     DOSSIER-DOM-02-MULTI-NODE-ROUTING
-Target Store:    Synapse Botanicals (DTC E-Commerce, Shopify Plus)
-Architecture:    Bi-Coastal Logistics Routing & Algorithmic Cost Optimization
-Fulfillment Nodes: LOC-PA-01 (Allentown, PA) | LOC-NV-02 (Reno, NV)
-Core Systems:    Shopify Multi-Location Routing, ShipBob WMS, Commercial Plus Carrier Rate Cards
-Classification:  Enterprise Technical Operations & Logistics Engineering Specification
-Compiled From:   Architecture-MultiNodeRoutingEngine-Spec.md
-                 Matrix-OrderRoutingCostOptimization-DecisionEngine.md
-                 CaseStudy-MultiLocationRoutingOptimization-Analysis.md
-```
+# Bi-Coastal Multi-Node Logistics & Freight Cost Optimization
 
 ---
 
@@ -87,30 +75,59 @@ Basket: 2 Units NeuroFocus (stocked at Reno) + 1 Unit Ashwagandha (stocked only 
 
 To systematically contain freight leakage, the Shopify Plus routing engine was configured with a strict, hierarchical 3-tier rule stack:
 
-```
-RULE HIERARCHY WATERFALL:
-  Tier 1: [MINIMIZE SPLIT SHIPMENTS]  (Weight: Absolute Priority)
-          └── Evaluate all nodes. If any single node holds 100% of the basket lines, 
-              route entirely to that node. Do NOT split.
-  Tier 2: [CLOSEST LOCATION]           (Weight: Secondary Tie-Breaker)
-          └── If multiple nodes can fulfill 100% of the order, select the node 
-              minimizing destination zone distance.
-  Tier 3: [INVENTORY RANKING BALANCING](Weight: Fallback Tie-Breaker)
-          └── If distance is equidistant (Midwest Zone 5), route to Allentown PA 
-              (LOC-PA-01) to protect Reno stock for West Coast high-margin velocity.
+```mermaid
+flowchart TD
+    R([Order Routing Decision]) --> T1
+
+    T1{"**Tier 1: Minimize Split Shipments**
+    ABSOLUTE PRIORITY
+    Can any single node fulfill 100% of basket?"}
+
+    T1 -- Yes --> A1["Route entirely to that node
+    Single box / single postage fee"]
+    A1 --> Done([Dispatch])
+
+    T1 -- No --> T2
+
+    T2{"**Tier 2: Closest Location**
+    SECONDARY TIE-BREAKER
+    Multiple nodes can fulfill 100%?"}
+
+    T2 -- Yes --> A2["Select node minimizing
+    destination zone distance"]
+    A2 --> Done
+
+    T2 -- No --> T3
+
+    T3["**Tier 3: Inventory Ranking Balance**
+    FALLBACK TIE-BREAKER
+    Equidistant (Midwest Zone 5):
+    Default to LOC-PA-01 Allentown
+    Protect Reno stock for West Coast velocity"]
+    T3 --> Done
 ```
 
 ### 3.1 Network Topology & Node SKU Matrix
 
-```
-┌─────────────────────────────────┐        ┌─────────────────────────────────┐
-│     LOC-PA-01 (Allentown, PA)   │        │      LOC-NV-02 (Reno, NV)       │
-├─────────────────────────────────┤        ├─────────────────────────────────┤
-│ • Primary East & Midwest Hub    │        │ • Primary West & Mountain Hub   │
-│ • Carrier Injection: USPS/UPS   │        │ • Carrier Injection: USPS/FedEx │
-│ • 100% SKU Depth (24/24 SKUs)   │        │ • High-Velocity Core (16 SKUs)  │
-│ • Production & Batching Lead    │        │ • Rapid Cross-Dock from PA      │
-└─────────────────────────────────┘        └─────────────────────────────────┘
+```mermaid
+flowchart LR
+    PA["**LOC-PA-01**
+    Allentown, PA
+    ─────────────────
+    Primary East & Midwest Hub
+    Carrier: USPS / UPS
+    SKU Depth: 100% (24/24 SKUs)
+    Production & Batching Lead"]
+
+    NV["**LOC-NV-02**
+    Reno, NV
+    ─────────────────
+    Primary West & Mountain Hub
+    Carrier: USPS / FedEx
+    SKU Depth: High-Velocity Core (16 SKUs)
+    Rapid Cross-Dock from PA"]
+
+    PA <-->|"Cross-dock replenishment"| NV
 ```
 
 ---

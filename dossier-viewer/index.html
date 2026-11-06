@@ -12,6 +12,8 @@
   <!-- highlight.js for syntax highlighting -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- mermaid.js for interactive diagrams -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
 
   <style>
     /* ═══════════════════════════════════════════
@@ -392,6 +394,26 @@
       border-color: rgba(201,183,159,0.3);
     }
 
+    /* Mermaid diagram container */
+    .mermaid-wrap {
+      margin: 28px 0;
+      padding: 24px;
+      background: rgba(24, 51, 75, 0.45);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      text-align: center;
+    }
+    .mermaid {
+      display: inline-block;
+      min-width: 260px;
+      text-align: center;
+    }
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
     /* ═══════════════════════════════════════════
        TABLE OF CONTENTS SIDEBAR (optional)
     ═══════════════════════════════════════════ */
@@ -597,6 +619,16 @@
       .md-body pre code { color: #333 !important; font-size: 7.5pt; }
       .md-body code { color: #566746 !important; background: #f0ede8 !important; border: none; }
 
+      /* Mermaid diagram in print */
+      .mermaid-wrap {
+        background: #fdfdfd !important;
+        border: 1pt solid #ddd !important;
+        border-radius: 4pt;
+        padding: 12pt;
+        margin: 14pt 0;
+        page-break-inside: avoid;
+      }
+
       /* Blockquotes */
       .md-body blockquote {
         border-left: 3pt solid #566746;
@@ -735,12 +767,43 @@
     function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
     function qsa(sel, ctx) { return [...(ctx || document).querySelectorAll(sel)]; }
 
+    /* ── Configure mermaid ── */
+    if (typeof mermaid !== 'undefined') {
+      try {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'base',
+          themeVariables: {
+            darkMode: true,
+            background: '#0f2234',
+            primaryColor: '#18334B',
+            primaryTextColor: '#FAEEE5',
+            primaryBorderColor: '#C9B79F',
+            lineColor: '#C9B79F',
+            secondaryColor: '#566746',
+            secondaryTextColor: '#FAEEE5',
+            secondaryBorderColor: '#C9B79F',
+            tertiaryColor: '#152d42',
+            tertiaryTextColor: '#FAEEE5',
+            tertiaryBorderColor: '#C9B79F',
+            fontFamily: "'Poppins', system-ui, sans-serif",
+            fontSize: '12px'
+          }
+        });
+      } catch (e) {
+        console.warn('Mermaid initialization warning:', e);
+      }
+    }
+
     /* ── Configure marked ── */
     if (typeof marked !== 'undefined' && marked.setOptions) {
       marked.setOptions({
         gfm: true,
         breaks: false,
         highlight: function (code, lang) {
+          if (lang === 'mermaid') {
+            return code;
+          }
           if (typeof hljs !== 'undefined') {
             if (lang && hljs.getLanguage && hljs.getLanguage(lang)) {
               try { return hljs.highlight(code, { language: lang }).value; } catch (e) {}
@@ -795,23 +858,55 @@
       // Inject
       qs('#md-body').innerHTML = html;
 
-      // Run highlight.js on any unhighlighted blocks (defensively)
+      // Transform language-mermaid code blocks into .mermaid containers
+      var mermaidBlocks = qsa('pre code.language-mermaid', qs('#md-body'));
+      mermaidBlocks.forEach(function (codeBlock, idx) {
+        var pre = codeBlock.parentElement;
+        var rawCode = codeBlock.textContent.trim();
+        var wrap = document.createElement('div');
+        wrap.className = 'mermaid-wrap';
+        var mermaidDiv = document.createElement('div');
+        mermaidDiv.className = 'mermaid';
+        mermaidDiv.id = 'mermaid-diagram-' + idx;
+        mermaidDiv.textContent = rawCode;
+        wrap.appendChild(mermaidDiv);
+        pre.parentNode.replaceChild(wrap, pre);
+      });
+
+      // Render mermaid diagrams
+      if (typeof mermaid !== 'undefined' && mermaidBlocks.length > 0) {
+        try {
+          if (typeof mermaid.run === 'function') {
+            mermaid.run({ querySelector: '.mermaid' }).catch(function (e) {
+              console.warn('Mermaid render warning:', e);
+            });
+          } else if (typeof mermaid.init === 'function') {
+            mermaid.init(undefined, qsa('.mermaid'));
+          }
+        } catch (mErr) {
+          console.warn('Mermaid execution warning:', mErr);
+        }
+      }
+
+      // Run highlight.js on any remaining unhighlighted blocks (defensively)
       if (typeof hljs !== 'undefined' && hljs.highlightElement) {
         qsa('pre code', qs('#md-body')).forEach(function (block) {
-          if (!block.classList.contains('hljs')) {
+          if (!block.classList.contains('hljs') && !block.classList.contains('language-mermaid')) {
             try { hljs.highlightElement(block); } catch (e) {}
           }
         });
       }
 
-      // Set UI metadata
-      qs('#topbar-title').textContent = title;
+      // Set UI metadata (use markdown H1 title if available)
+      var firstH1 = qs('h1', qs('#md-body'));
+      var displayTitle = (firstH1 && firstH1.textContent.trim()) ? firstH1.textContent.trim() : title;
+      qs('#topbar-title').textContent = displayTitle;
       qs('#doc-badge').textContent = domain;
       qs('#doc-filename').textContent = filename;
       qs('#doc-date').textContent = 'Viewed: ' + today;
-      qs('#print-doc-title').textContent = filename;
+      qs('#print-doc-title').textContent = displayTitle;
       qs('#print-url').textContent = window.location.href;
-      document.title = title + ' — Riovic Matthew G. Susas';
+      document.title = displayTitle + ' — Riovic Matthew G. Susas';
 
       // Build TOC from h2/h3
       buildToc();

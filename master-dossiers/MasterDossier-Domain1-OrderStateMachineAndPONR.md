@@ -1,15 +1,4 @@
-# Master Flagship Dossier: Domain 1 — Order State Machine & Point-of-No-Return (PONR) Protocol
-
-```
-Document ID:     DOSSIER-DOM-01-ORDER-STATE-MACHINE
-Target Store:    Synapse Botanicals (DTC E-Commerce, Shopify Plus)
-Architecture:    Distributed E-Commerce State Machine & Asynchronous 3PL WMS
-Core Systems:    Shopify Plus Admin, Shopify Flow, ShipBob 3PL WMS (Allentown/Reno), Gorgias, CASS USPS Engine
-Classification:  Enterprise Technical Operations & Systems Engineering Specification
-Compiled From:   SOP-OrderExceptionMutationProtocol-Parent.md
-                 Matrix-OrderStatePointOfNoReturn-Master.md
-                 Audit-OrderStateSimulation-RunSheet.md
-```
+# Order State Machine & Point of No Return (PONR) Protocol
 
 ---
 
@@ -66,31 +55,19 @@ The primary source of failure in e-commerce operations is assuming that Shopify'
 ### 3.1 The Atomic Execution Sequence
 No operator or automated script may edit, exchange, or cancel an order without executing an atomic fulfillment hold.
 
+```mermaid
+flowchart LR
+    S1["**1. Freeze Order**<br>Native Fulfillment Hold"] --> S2["**2. Verify 3PL Lock**<br>Queue Confirmation"]
+    S2 --> S3["**3. Mutate Record**<br>CASS Addr / SKU Swap"]
+    S3 --> S4["**4. Release & Resync**<br>Re-inject to Wave Queue"]
 ```
-[Trigger: Mutation Request Ingested]
-     │
-     ▼
-[Step 1: Native Shopify Fulfillment Hold]
-     │   • Action: POST /admin/api/2026-01/fulfillments/{id}/holds.json
-     │   • Reason: AWAITING_CUSTOMER_UPDATE
-     │   • Payload: { "reason_notes": "Pending customer address mutation / SKU swap" }
-     │
-     ▼
-[Step 2: Downstream 3PL Queue Verification]
-     │   • Action: GET /api/v1/shipments?order_id={id}
-     │   • Verify: ShipmentState == "On Hold"
-     │   • Requirement: HTTP 200 with confirmation timestamp < 60s
-     │
-     ▼
-[Step 3: Database Mutation Execution]
-     │   • Address: CASS-normalized standardization
-     │   • Line Items: 1:1 equal-value consumable exchange
-     │
-     ▼
-[Step 4: Release & Resynchronize]
-         • Action: POST /admin/api/2026-01/fulfillments/{id}/release_hold.json
-         • Re-inject validated payload into Allentown or Reno fulfillment stream
-```
+
+| Phase | Action | Target System & Endpoint | Guard & Verification Criteria |
+|---|---|---|---|
+| **Step 1: Lock** | Native Fulfillment Hold | `POST /admin/api/2026-01/fulfillments/{id}/holds.json` | Reason: `AWAITING_CUSTOMER_UPDATE`<br>Payload: `reason_notes: "Pending customer mutation"` |
+| **Step 2: Verify** | 3PL Queue Lock Check | `GET /api/v1/shipments?order_id={id}` | Verify `ShipmentState == "On Hold"`<br>Req: HTTP 200 confirmation within 60s |
+| **Step 3: Mutate** | Database Mutation | `PUT /admin/api/2026-01/orders/{id}.json` | Address: CASS/ZIP+4 standardized<br>SKU Swap: 1:1 equal-value ($0.00 delta) |
+| **Step 4: Release**| Hold Release & Re-queue | `POST /admin/api/2026-01/fulfillments/{id}/release_hold.json` | Re-inject to Allentown/Reno stream<br>Confirm: `READY_FOR_WAVE_BATCH` |
 
 ### 3.2 Step-by-Step Operator Procedures
 

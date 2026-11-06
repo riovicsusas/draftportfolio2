@@ -1,16 +1,4 @@
-# Master Dossier — Capstone: Asynchronous Order Mutation & Webhook Failure Architecture
-
-```
-Document ID:     MasterDossier-Capstone-AsynchronousOrderMutation
-Category:        Capstone Case Study (Cross-Domain Systems Telemetry & Forensic Post-Mortem)
-Domains Covered: Domain 1 (Order State Machine & PONR) + Domain 4 (Webhook Automation & Flow Triage)
-Status:          LOCKED — Master Baseline
-Target Audience: VP Engineering, Heads of Operations, Lead Systems Architects, Technical Founders
-Ecosystem Scope: Shopify Fulfillment Orders API, Shopify Flow, Shopify Webhooks API, ShipBob 3PL WMS,
-                 UPS Tracking API, Gorgias CRM, Amazon SQS (DLQ architecture)
-Business Unit:   Synapse Botanicals (Systems Architecture & Multi-Node Fulfillment)
-Loom Defense:    [Record: 12–18 min walkthrough | Timecoded script below]
-```
+# Asynchronous Order Mutation & Webhook Failure Architecture
 
 ---
 
@@ -47,12 +35,24 @@ At that precise second, the 3PL WMS ingestion endpoint timed out with an **HTTP 
 
 **Result:** Shopify Admin displayed San Francisco. The physical parcel was sealed on a pallet headed to Philadelphia.
 
-```
-ZOMBIE STATE DEFINITION:
-  Shopify digital state  → "Address: San Francisco, CA" (SUCCESS)
-  3PL physical state     → Label: Philadelphia, PA (PACKED, DISPATCHED)
-  Customer expectation   → Delivery to San Francisco
-  Actual outcome         → Misdirected parcel + chargeback filed
+```mermaid
+flowchart TD
+    SD["**Shopify Digital State**
+    Address: San Francisco, CA ✅ SUCCESS"]
+
+    PH["**3PL Physical State**
+    Label: Philadelphia, PA
+    Status: PACKED → DISPATCHED ❌"]
+
+    CE["**Customer Expectation**
+    Delivery to San Francisco, CA"]
+
+    AO["**Actual Outcome**
+    Misdirected parcel + Chargeback Filed 💸"]
+
+    SD -->|"State divergence — silent failure at seam"| PH
+    CE -->|"Expectation vs. reality gap"| AO
+    PH --> AO
 ```
 
 ---

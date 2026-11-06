@@ -1,15 +1,4 @@
-# Master Flagship Dossier: Domain 4 — Business Logic Automation & Webhook Recursion Triage
-
-```
-Document ID:     DOSSIER-DOM-04-AUTOMATION-LOGIC-TRIAGE
-Target Store:    Synapse Botanicals (DTC E-Commerce, Shopify Plus)
-Architecture:    Event-Driven Microservices, Shopify Flow Webhooks, & Idempotency Engines
-Core Systems:    Shopify Flow, Custom HTTP Endpoints, AWS SQS Dead-Letter Queue (DLQ), ShipBob Webhook Listeners
-Classification:  Enterprise Technical Operations & Automation Engineering Specification
-Compiled From:   SOP-BusinessLogicAutomationAndWebhooks-Parent.md
-                 Matrix-AutomationLogicAndWebhookTriage-Engine.md
-                 Audit-WebhookFailureAndFlowRecursion-RunSheet.md
-```
+# Business Logic Automation & Webhook Recursion Triage
 
 ---
 
@@ -20,26 +9,28 @@ Modern e-commerce architectures rely heavily on event-driven automation: when an
 
 However, un-governed automation logic in platforms like Shopify Flow frequently triggers two catastrophic, platform-halting failure modes:
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    THE TWO FATAL AUTOMATION TRAPS                       │
-├─────────────────────────────────────────────────────────────────────────┤
-│ TRAP A: THE RUNAWAY TAG RECURSION LOOP                                  │
-│ • Flow Workflow 1: Triggers on "Order tags added" -> Adds Tag "REVIEW".  │
-│ • Flow Workflow 2: Triggers on "Order tags added" -> Adds Tag "AUDITED". │
-│ • THE TRAP: Without an explicit negative check guard, each tag addition  │
-│   re-triggers the other flow infinitely.                                │
-│ • CONSEQUENCE: Order timeline balloons to 1,000+ events in 90 seconds.   │
-│   Shopify GraphQL API rate limits are exhausted, throttling all store    │
-│   checkouts and third-party warehouse syncs.                            │
-├─────────────────────────────────────────────────────────────────────────┤
-│ TRAP B: THE ASYNCHRONOUS WEBHOOK 504 RETRY STORM                       │
-│ • 3PL warehouse database experiences temporary lock -> Returns HTTP 504.│
-│ • Shopify Flow blindly retries every 15 minutes with no jitter or DLQ.  │
-│ • During high-volume flash sales (Black Friday / Cyber Monday), 500+     │
-│   failed webhook retries slam the warehouse endpoint simultaneously,     │
-│   permanently crashing the middleware and dropping critical orders.     │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TrapA["**TRAP A: Runaway Tag Recursion Loop**
+    Flow 1: Triggers on 'Order tags added' → Adds Tag 'REVIEW'
+    Flow 2: Triggers on 'Order tags added' → Adds Tag 'AUDITED'
+    Without a negative check guard, each tag addition
+    re-triggers the other flow infinitely.
+    ─────────────────────────────────────────────────
+    CONSEQUENCE: Order timeline balloons to 1,000+ events
+    in 90 seconds. GraphQL API rate limits exhausted.
+    All checkouts and 3PL syncs throttled."]
+
+    TrapB["**TRAP B: Asynchronous Webhook 504 Retry Storm**
+    3PL warehouse DB experiences temporary lock → Returns HTTP 504.
+    Shopify Flow blindly retries every 15 minutes (no jitter, no DLQ).
+    During flash sales (BFCM), 500+ failed retries slam the
+    warehouse endpoint simultaneously.
+    ─────────────────────────────────────────────────
+    CONSEQUENCE: Middleware permanently crashes.
+    Critical orders are dropped."]
+
+    TrapA ~~~ TrapB
 ```
 
 ### 1.2 The Engineering Solution: Idempotent Event Handlers & DLQ Buffers
@@ -57,27 +48,36 @@ When multiple automation flows trigger on the same event (e.g. `Order Created`),
 
 ### 2.1 The Four-Tier Execution Priority Ladder
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│              TIER 1: SECURITY, FRAUD & COMPLIANCE (Priority 1)          │
-│ • Fraud Risk Analysis (Noonas, Signifyd, Shopify Protect)               │
-│ • Immediate Fulfillment Hold on High-Risk Scores                        │
-│ • CASS Address Validation Gate                                          │
-├─────────────────────────────────────────────────────────────────────────┤
-│              TIER 2: INVENTORY & FULFILLMENT ROUTING (Priority 2)       │
-│ • Point-of-No-Return (PONR) Boundary Checks                             │
-│ • Bi-Coastal Routing Allocation (Allentown LOC-PA-01 vs Reno LOC-NV-02) │
-│ • Fulfillment Order Hold Releases                                       │
-├─────────────────────────────────────────────────────────────────────────┤
-│              TIER 3: FINANCIAL & LEDGER RECONCILIATION (Priority 3)     │
-│ • Gift Card Balancing, Sales Tax Exemption Audits                       │
-│ • Net-Zero Mutation Validation & Accounting Journal Sync                │
-├─────────────────────────────────────────────────────────────────────────┤
-│              TIER 4: MARKETING, RETENTION & ANALYTICS (Priority 4)      │
-│ • Klaviyo Event Dispatch (Placed Order, Welcome Sequence)               │
-│ • Customer Loyalty Tagging (VIP, Tier Status)                           │
-│ • Post-Purchase Upsell Triggering                                       │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    P1["**Tier 1 — Security, Fraud & Compliance**
+    Priority: Absolute First
+    ─────────────────────────────────────
+    • Fraud Risk Analysis (Noona, Signifyd, Shopify Protect)
+    • Immediate Fulfillment Hold on High-Risk Scores
+    • CASS Address Validation Gate"]
+
+    P2["**Tier 2 — Inventory & Fulfillment Routing**
+    Priority: Second
+    ─────────────────────────────────────
+    • Point-of-No-Return (PONR) Boundary Checks
+    • Bi-Coastal Routing Allocation (LOC-PA-01 vs LOC-NV-02)
+    • Fulfillment Order Hold Releases"]
+
+    P3["**Tier 3 — Financial & Ledger Reconciliation**
+    Priority: Third
+    ─────────────────────────────────────
+    • Gift Card Balancing, Sales Tax Exemption Audits
+    • Net-Zero Mutation Validation & Accounting Journal Sync"]
+
+    P4["**Tier 4 — Marketing, Retention & Analytics**
+    Priority: Last
+    ─────────────────────────────────────
+    • Klaviyo Event Dispatch (Placed Order, Welcome Sequence)
+    • Customer Loyalty Tagging (VIP, Tier Status)
+    • Post-Purchase Upsell Triggering"]
+
+    P1 --> P2 --> P3 --> P4
 ```
 
 ### 2.2 Event Trigger vs. Action Conflict Matrix
@@ -132,19 +132,27 @@ upstream check verifying that the target tag is NOT already present on the order
 
 ### 4.1 Production Flow Syntax (Shopify Flow Editor Blueprint)
 
-```
-TRIGGER: Order tags added
-  │
-  ▼
-CONDITION:
-  • Tags CONTAINS "Require-Fraud-Review"
-    AND
-  • Tags DO NOT CONTAIN "Fraud-Review-Processed"  <-- [MANDATORY GUARD]
-  │
-  ▼
-ACTION:
-  1. Send HTTP request to Fraud API
-  2. Add tag: "Fraud-Review-Processed"
+```mermaid
+flowchart TD
+    TR([TRIGGER: Order tags added]) --> C1
+
+    C1{"CONDITION CHECK 1
+    Tags CONTAINS 'Require-Fraud-Review'?"}
+    C1 -- No --> HALT([Workflow Halted])
+    C1 -- Yes --> C2
+
+    C2{"CONDITION CHECK 2
+    Tags DO NOT CONTAIN 'Fraud-Review-Processed'?
+    ← MANDATORY GUARD"}
+    C2 -- No: Tag already exists --> HALT
+    C2 -- Yes: Safe to proceed --> A1
+
+    A1["ACTION 1
+    Send HTTP request to Fraud API"] --> A2
+
+    A2["ACTION 2
+    Add tag: 'Fraud-Review-Processed'"]
+    A2 --> DONE([Complete — Loop impossible])
 ```
 *Result*: Even if a downstream system re-fires the "Order tags added" trigger 50 times, the workflow halts at the guard condition, completely stopping infinite recursion loops.
 

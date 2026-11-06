@@ -1,16 +1,4 @@
-# Master Flagship Dossier: Domain 5 — Algorithmic Margin Defense & Storefront Cart Diagnostics
-
-```
-Document ID:     DOSSIER-DOM-05-MARGIN-DEFENSE-DIAGNOSTICS
-Target Store:    Synapse Botanicals (DTC E-Commerce, Shopify Plus)
-Architecture:    Combinatorial Discount Governance, Cart Telemetry, & Rapid Diagnostic Protocols
-Core Systems:    Shopify Plus Checkout Extensibility, Chrome DevTools, Shopify Payments / Stripe API, Webhook Logs
-Diagnostic SLA:  MTTI < 60s (Mean Time to Identification) | MTTR < 15m (Mean Time to Remediation)
-Classification:  Enterprise Technical Operations & Storefront Diagnostics Specification
-Compiled From:   SOP-TechnicalDiagnosisAndAuditLogging-Parent.md
-                 CaseStudy-DiscountCollisionAndCartDiagnostics-Analysis.md
-                 Matrix-DiscountCombinationsAndMarginProtection-Engine.md
-```
+# Algorithmic Margin Defense & Storefront Cart Diagnostics
 
 ---
 
@@ -19,27 +7,27 @@ Compiled From:   SOP-TechnicalDiagnosisAndAuditLogging-Parent.md
 ### 1.1 The Operational Challenge
 In scaling direct-to-consumer e-commerce, the checkout funnel is vulnerable to two distinct yet equally devastating technical threats:
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    THE DUAL STOREFRONT THREATS                          │
-├─────────────────────────────────────────────────────────────────────────┤
-│ THREAT 1: THE UNRESTRICTED COUPON STACKING COLLISION LOOP               │
-│ • Marketing launches separate promotions: "WELCOME15" ($15 off),        │
-│   "VIP20" (20% product tier), and "FREESHIP" (Free Ground Freight).     │
-│ • When Shopify Plus discount classes lack mutual exclusivity rules,     │
-│   customers stack all three promotions on small checkout baskets.       │
-│ • THE FINANCIAL HAZARD: Total discounts exceed the product margin.      │
-│   The merchant generates a NEGATIVE contribution margin—literally       │
-│   losing cash on every order shipped.                                   │
-├─────────────────────────────────────────────────────────────────────────┤
-│ THREAT 2: THE STOREFRONT AJAX CART FREEZE (HTTP 422 SILENT CRASH)       │
-│ • Storefront theme scripts make asynchronous AJAX calls to /cart/add.js.│
-│ • Inventory race conditions or malformed variant payloads return        │
-│   HTTP 422 Unprocessable Entity.                                        │
-│ • THE USER TRAP: The browser screen freezes without displaying an error │
-│   message. The customer repeatedly mashes the "Checkout" button, assumes│
-│   the site is broken, and abandons the cart forever.                    │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    T1["**THREAT 1: Unrestricted Coupon Stacking Collision**
+    Marketing launches separate promos: 'WELCOME15' + 'VIP20' + 'FREESHIP'.
+    Without mutual exclusivity rules, customers stack all three
+    on small checkout baskets.
+    ─────────────────────────────────────────────────
+    FINANCIAL HAZARD: Total discounts exceed the product margin.
+    Merchant generates NEGATIVE contribution margin —
+    literally losing cash on every order shipped."]
+
+    T2["**THREAT 2: Storefront AJAX Cart Freeze (HTTP 422 Silent Crash)**
+    Theme scripts make async AJAX calls to /cart/add.js.
+    Inventory race conditions or malformed variant payloads
+    return HTTP 422 Unprocessable Entity.
+    ─────────────────────────────────────────────────
+    USER TRAP: Browser freezes with no visible error.
+    Customer repeatedly clicks 'Checkout', assumes site is broken,
+    and abandons the cart forever."]
+
+    T1 ~~~ T2
 ```
 
 ### 1.2 The Engineering Solution: The Margin Protection Floor & 3-Minute Triage
@@ -97,14 +85,26 @@ Shopify divides promotional rules into three distinct classes: **Product Discoun
 
 ### 3.1 The Master Combinatorial Ruleset
 
-```
-┌─────────────────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐
-│                                 │ Class 1: Product Tier│ Class 2: Order Tier  │ Class 3: Shipping    │
-├─────────────────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
-│ Class 1: Product (e.g. 20% Off) │ ❌ MUTUALLY EXCLUSIVE│ ⚠️ RESTRICTED (Floor)│ ✅ COMBINES          │
-│ Class 2: Order (e.g. $15 Off)   │ ⚠️ RESTRICTED (Floor)│ ❌ MUTUALLY EXCLUSIVE│ ✅ COMBINES          │
-│ Class 3: Shipping (Free Freight)│ ✅ COMBINES          │ ✅ COMBINES          │ ❌ MUTUALLY EXCLUSIVE│
-└─────────────────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘
+```mermaid
+flowchart LR
+    P["Product Discount
+    e.g. 20% Off"]
+    O["Order Discount
+    e.g. \$15 Off"]
+    S["Shipping Discount
+    Free Freight"]
+
+    P -->|"❌ MUTUALLY EXCLUSIVE"| P
+    P -->|"⚠️ RESTRICTED — Cart ≥ \$85"| O
+    P -->|"✅ COMBINES"| S
+
+    O -->|"⚠️ RESTRICTED — Cart ≥ \$85"| P
+    O -->|"❌ MUTUALLY EXCLUSIVE"| O
+    O -->|"✅ COMBINES"| S
+
+    S -->|"✅ COMBINES"| P
+    S -->|"✅ COMBINES"| O
+    S -->|"❌ MUTUALLY EXCLUSIVE"| S
 ```
 
 ### 3.2 Key Rules:
@@ -155,14 +155,14 @@ Customer applied three separate coupons during checkout:
 3. `FREESHIP`: Free Ground Shipping (-$6.50 shipping fee waived)
 
 ```
-FINANCIAL DISASTER AUDIT (PRE-FIX):
-  Gross Revenue Collected:      $66.00 - $13.20 - $15.00 = $37.80
-  Cost of Goods Sold (COGS):    $10.24 (Gummies) + $8.16 (Tincture) = -$18.40
-  3PL Warehouse Handling:       -$4.10 (Base + pick + box)
-  Carrier Outbound Freight:     -$6.50 (Paid by merchant due to Free Shipping)
-  Credit Card Gateway Fee:      -$1.40
-  ──────────────────────────────────────────────────────────────────
-  NET ORDER CONTRIBUTION PROFIT: $37.80 - $18.40 - $4.10 - $6.50 - $1.40 = -$4.80 (LOSS!)
+FINANCIAL DISASTER AUDIT — Order #1063 (PRE-FIX):
+  Gross Revenue Collected:      $66.00 − $13.20 (VIP20) − $15.00 (WELCOME15) = $37.80
+  Cost of Goods Sold (COGS):    −$10.24 (Gummies) + −$8.16 (Tincture)        = −$18.40
+  3PL Warehouse Handling:       −$4.10 (Base + pick + box)
+  Carrier Outbound Freight:     −$6.50 (Paid by merchant — Free Shipping)
+  Credit Card Gateway Fee:      −$1.40
+  ─────────────────────────────────────────────────────────────────────
+  NET ORDER CONTRIBUTION:       $37.80 − $18.40 − $4.10 − $6.50 − $1.40 = −$4.80 (LOSS!)
 ```
 *Result*: The store **lost $4.80 in pure cash** by fulfilling this order!
 

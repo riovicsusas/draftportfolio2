@@ -1,16 +1,4 @@
-# Master Flagship Dossier: Domain 3 — Enterprise Matrixify Migration & Barcode Schema Governance
-
-```
-Document ID:     DOSSIER-DOM-03-CATALOG-DATA-GOVERNANCE
-Target Store:    Synapse Botanicals (DTC E-Commerce, Shopify Plus)
-Architecture:    Bulk Catalog Mutation, Barcode Protection, & Matrixify MERGE Lifecycles
-Catalog Size:    24 Master SKUs (Nootropics, Adaptogens, Functional Gummies)
-Core Systems:    Shopify Plus Products API, Matrixify (Excelify), Google Sheets Data Pipelines, ShipBob WMS Barcode Scanners
-Classification:  Enterprise Technical Operations & Data Governance Specification
-Compiled From:   SOP-BulkCatalogMigrationAndHygiene-Parent.md
-                 Matrix-CatalogDataSchemaAndValidation-Governance.md
-                 Audit-BulkCatalogMutation-RunSheet.md
-```
+# Enterprise Matrixify Migration & Barcode Schema Governance
 
 ---
 
@@ -21,25 +9,24 @@ Direct-to-consumer product catalogs are not static spreadsheets—they are the f
 
 When merchandising teams or operators perform bulk updates (e.g. seasonal price changes, ingredient updates, or variant additions) using standard CSV spreadsheets, they frequently trigger two catastrophic, multi-thousand-dollar failure modes:
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    THE TWO FATAL CATALOG TRAPS                          │
-├─────────────────────────────────────────────────────────────────────────┤
-│ TRAP A: THE NUMERIC COERCION & BARCODE CORRUPTION TRAP                 │
-│ • Spreadsheet software (Excel, Google Sheets) interprets 12-digit UPC-A │
-│   barcodes (e.g. 850012345678) as floating-point numbers.              │
-│ • Floating-point coercion converts barcodes to scientific notation      │
-│   (8.50012E+11) or truncates leading zeros (012345678901 -> 12345678901)│
-│ • CONSEQUENCE: Warehouse physical barcode scanners reject the product.  │
-│   All fulfillment halts, triggering emergency warehouse relabeling fees.│
-├─────────────────────────────────────────────────────────────────────────┤
-│ TRAP B: THE HANDLE MUTATION & SEO CRASH TRAP                            │
-│ • In Shopify, the 'Handle' column defines the live URL slug:            │
-│   synapse-botanicals.myshopify.com/products/{handle}                    │
-│ • If an operator renames the handle during a CSV edit, all active links │
-│   break, resulting in HTTP 404 storefront crashes, dead ad spend on Meta│
-│   and Google Shopping, and immediate loss of Google SEO ranking history.│
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    TrapA["**TRAP A: Numeric Coercion & Barcode Corruption**
+    Excel / Google Sheets auto-formats 12-digit UPC-A barcodes
+    as floating-point → scientific notation (8.50012E+11)
+    or truncates leading zeros (012345678901 → 12345678901)
+    ─────────────────────────────────────────────────
+    CONSEQUENCE: Warehouse scanners reject product.
+    Fulfillment halts. Emergency relabeling fees triggered."]
+
+    TrapB["**TRAP B: Handle Mutation & SEO Crash**
+    Shopify 'Handle' defines the live product URL slug:
+    synapse-botanicals.myshopify.com/products/{handle}
+    If renamed in CSV → all active links break:
+    HTTP 404 storefront crashes, dead Meta/Google ad spend,
+    immediate loss of Google SEO ranking history."]
+
+    TrapA ~~~ TrapB
 ```
 
 ### 1.2 The Engineering Solution: Matrixify Non-Destructive MERGE
@@ -120,28 +107,32 @@ Standard native Shopify CSV imports execute a destructive **REPLACE** operation:
 
 Matrixify (Excelify) enables atomic, non-destructive **MERGE** execution:
 
-```
-┌───────────────────────────────────────────────────────────────────────────┐
-│                    THE 5-STEP MATRIXIFY DEPLOYMENT GATE                   │
-├───────────────────────────────────────────────────────────────────────────┤
-│ Gate 1: Targeted Column Pruning                                           │
-│         Strip all non-essential columns. Never import full master exports.│
-│         Only include: ID, Handle, and the EXACT fields being mutated.     │
-│                                                                           │
-│ Gate 2: Header Command Configuration                                      │
-│         Set sheet header row command: "Command: MERGE"                    │
-│         Shopify updates only specified cells; leaves all else untouched.  │
-│                                                                           │
-│ Gate 3: Automated Pre-Flight Schema Audit                                 │
-│         Run regex linters against 100% of rows. Zero errors permitted.    │
-│                                                                           │
-│ Gate 4: 10% Canary Batch Test                                             │
-│         Export 2 variants -> Import via Matrixify -> Verify in Storefront │
-│         and scan physical barcode in ShipBob WMS testing scanner.         │
-│                                                                           │
-│ Gate 5: Production Batch Deployment & Audit Log Archival                  │
-│         Deploy remaining 90% -> Archive CSV diff in secure audit vault.   │
-└───────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    G1["**Gate 1: Targeted Column Pruning**
+    Strip all non-essential columns from export.
+    Only include: ID, Handle, and the exact fields being mutated.
+    Never import full master exports."] --> G2
+
+    G2["**Gate 2: Header Command Configuration**
+    Set sheet header row: 'Command: MERGE'
+    Shopify updates only specified cells;
+    leaves all other database fields untouched."] --> G3
+
+    G3["**Gate 3: Automated Pre-Flight Schema Audit**
+    Run regex linters against 100% of rows.
+    Zero blocking errors permitted before proceeding."] --> G4
+
+    G4["**Gate 4: 10% Canary Batch Test**
+    Export 2 variants → Import via Matrixify
+    Verify on storefront + scan physical barcode
+    in ShipBob WMS testing scanner."] --> G5
+
+    G5["**Gate 5: Production Batch Deployment & Audit Log Archival**
+    Deploy remaining 90%
+    Archive CSV diff in secure audit vault."]
+
+    G5 --> Done(["✅ Catalog Deployment Complete"])
 ```
 
 ---
