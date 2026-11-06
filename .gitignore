@@ -1,0 +1,16 @@
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Backups & Raw intermediate drafts
+*.bak
+*.original
+.md files/
+gpt md/
+Prev/
+synthesized md files/
+*.zip
+
+# Temporary scripts
+*.tmp
+temp_*

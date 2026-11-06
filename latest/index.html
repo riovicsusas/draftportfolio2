@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latest Updates & What's New — Riovic Matthew G. Susas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Open menu"><i class="ph ph-list"></i></button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="profile-pic-wrap">
+      <img src="../images/susas_profilepic.jpg" alt="Riovic Matthew G. Susas">
+    </div>
+    <p class="profile-name">Riovic Matthew<br>G. Susas</p>
+    <div class="socials">
+      <a href="mailto:riovic.susas@gmail.com" title="Gmail"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></a>
+      <a href="#" title="WhatsApp"><i class="ph ph-whatsapp-logo"></i><span>WhatsApp</span></a>
+      <a href="#" title="Upwork"><i class="ph ph-briefcase"></i><span>Upwork</span></a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <ul class="nav" id="nav">
+      <li><a href="../" class="nav-link"><i class="ph ph-house-simple"></i> <span>Home</span></a></li>
+      <li><a href="../projects/" class="nav-link"><i class="ph ph-folder-open"></i> <span>Projects</span></a></li>
+      <li><a href="../about/" class="nav-link"><i class="ph ph-user-circle"></i> <span>About Me</span></a></li>
+      <li><a href="../testimonials/" class="nav-link"><i class="ph ph-chat-circle-dots"></i> <span>Testimonials</span></a></li>
+      <li><a href="../latest/" class="nav-link active"><i class="ph ph-newspaper"></i> <span>Latest</span></a></li>
+      <li><a href="../contact/" class="nav-link"><i class="ph ph-paper-plane-tilt"></i> <span>Contact</span></a></li>
+    </ul>
+    <p class="sidebar-footer">&copy; 2026 Riovic Matthew G. Susas<br>All rights reserved.</p>
+  </aside>
+
+  <!-- ══════════════════════════ MAIN ══════════════════════════ -->
+  <main class="main" id="mainContent">
+
+    <div class="page active" id="page-latest">
+      <div class="section-header">
+        <h2>Latest Updates &amp; Activity Log</h2>
+        <p>Continuous operational deployments, automation rollouts, and engineering postmortems.</p>
+      </div>
+
+      <div class="latest-timeline" id="fullTimeline"></div>
+    </div>
+
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/feed-data.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const feed = getFeed();
+      const container = document.getElementById('fullTimeline');
+      if (container && feed) {
+        // Expanded feed with richer activity descriptions
+        const richFeed = [
+          ...feed,
+          {
+            id: 5,
+            date: 'Jun 2026',
+            text: 'Completed Synapse Botanicals enterprise simulation architecture — published full 24-SKU matrix, bi-coastal logistics waterfalls, and capstone webhook failure postmortem.',
+            tag: 'Architecture Spec',
+            link: 'projects.html?id=c1-async-mutation'
+          },
+          {
+            id: 6,
+            date: 'Jun 2026',
+            text: 'Published Master SOP for Bulk Catalog Mutation and Google Sheets IEEE 754 floating-point barcode preservation protocol.',
+            tag: 'Data Governance',
+            link: 'projects.html?id=d3-bulk-catalog-sop'
+          }
+        ];
+
+        container.innerHTML = richFeed.map(item => `
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="timeline-date"><i class="ph ph-calendar-blank"></i> ${item.date}</span>
+              <span class="timeline-tag">${item.tag}</span>
+            </div>
+            <p class="timeline-text">${item.text}</p>
+            ${item.link ? `<a href="${item.link}" class="timeline-link">View Documentation <i class="ph ph-arrow-right"></i></a>` : ''}
+          </div>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>

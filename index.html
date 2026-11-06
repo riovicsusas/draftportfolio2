@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Riovic Matthew G. Susas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Open menu"><i class="ph ph-list"></i></button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="profile-pic-wrap">
+      <img src="images/susas_profilepic.jpg" alt="Riovic Matthew G. Susas">
+    </div>
+    <p class="profile-name">Riovic Matthew<br>G. Susas</p>
+    <div class="socials">
+      <a href="mailto:riovic.susas@gmail.com" title="Gmail"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></a>
+      <a href="#" title="WhatsApp"><i class="ph ph-whatsapp-logo"></i><span>WhatsApp</span></a>
+      <a href="#" title="Upwork"><i class="ph ph-briefcase"></i><span>Upwork</span></a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <ul class="nav" id="nav">
+      <li><a href="index.html" class="nav-link active"><i class="ph ph-house-simple"></i> <span>Home</span></a></li>
+      <li><a href="projects/" class="nav-link"><i class="ph ph-folder-open"></i> <span>Projects</span></a></li>
+      <li><a href="about/" class="nav-link"><i class="ph ph-user-circle"></i> <span>About Me</span></a></li>
+      <li><a href="testimonials/" class="nav-link"><i class="ph ph-chat-circle-dots"></i> <span>Testimonials</span></a></li>
+      <li><a href="latest/" class="nav-link"><i class="ph ph-newspaper"></i> <span>Latest</span></a></li>
+      <li><a href="contact/" class="nav-link"><i class="ph ph-paper-plane-tilt"></i> <span>Contact</span></a></li>
+    </ul>
+    <p class="sidebar-footer">&copy; 2026 Riovic Matthew G. Susas<br>All rights reserved.</p>
+  </aside>
+
+  <!-- ══════════════════════════ MAIN ══════════════════════════ -->
+  <main class="main" id="mainContent">
+
+    <div class="page active" id="page-home">
+      <!-- HERO -->
+      <div class="hero-card">
+        <a href="contact/" class="hero-cta">Get in touch <i class="ph ph-arrow-up-right"></i></a>
+        <div class="hero-tag"><i class="ph ph-sparkle"></i> Available for work</div>
+        <h1 class="hero-title">Automate smarter.<br><span>Scale without the chaos.</span></h1>
+        <p class="hero-sub">I build e-commerce systems that run themselves — from Shopify automations to seamless customer journeys. Set it up once, let it grow forever.</p>
+      </div>
+
+      <!-- DAILY DRIVERS BELT -->
+      <div class="drivers-wrap">
+        <div class="drivers-label">
+          <p>Daily Drivers</p>
+          <p>Tools I work with</p>
+        </div>
+        <div class="drivers-divider"></div>
+        <div class="belt-viewport">
+          <div class="belt-track" id="beltTrack"></div>
+        </div>
+      </div>
+
+      <!-- BENTO GRID -->
+      <div class="bento">
+        <!-- What's New / Latest -->
+        <div class="card card-whats-new" onclick="location.href='latest/'" style="cursor:pointer;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div class="card-icon-badge"><i class="ph ph-newspaper"></i></div>
+            <i class="ph ph-arrow-up-right card-arrow"></i>
+          </div>
+          <p class="card-label">Latest Activity</p>
+          <h2 class="card-title">What's New?</h2>
+          <p class="card-desc">Recent automations, catalog migrations, and infrastructure deployments.</p>
+          <div class="whats-new-feed" id="homeFeed"></div>
+          <div style="margin-top:auto; padding-top:16px;">
+            <a href="latest/" style="font-size:12px; font-weight:700; color:var(--isabelline); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">View all updates <i class="ph ph-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="card card-projects" onclick="location.href='projects/'" style="cursor:pointer;">
+          <i class="ph ph-arrow-up-right card-arrow"></i>
+          <div class="card-icon-badge"><i class="ph ph-folder-open"></i></div>
+          <p class="card-label">Curriculum &amp; Deliverables</p>
+          <h2 class="card-title">Technical Projects</h2>
+          <p class="card-desc">6 operational domains &amp; enterprise capstone case study for Synapse Botanicals.</p>
+          <div class="project-list">
+            <div class="project-item" onclick="event.stopPropagation(); location.href='projects/?folder=Order%20Lifecycle%20%26%20State%20Machine';">
+              <i class="ph ph-arrows-clockwise"></i>
+              <span>Order Lifecycle &amp; State Machine</span>
+              <span class="project-num">4 files</span>
+              <i class="ph ph-caret-right" style="font-size:12px;"></i>
+            </div>
+            <div class="project-item" onclick="event.stopPropagation(); location.href='projects/?folder=Multi-Location%20Routing%20%26%20Freight%20Optimization';">
+              <i class="ph ph-truck"></i>
+              <span>Multi-Location Routing &amp; Freight</span>
+              <span class="project-num">3 files</span>
+              <i class="ph ph-caret-right" style="font-size:12px;"></i>
+            </div>
+            <div class="project-item" onclick="event.stopPropagation(); location.href='projects/?folder=Bulk%20Data%20Management%20%26%20Catalog%20Integrity';">
+              <i class="ph ph-database"></i>
+              <span>Bulk Data &amp; Catalog Integrity</span>
+              <span class="project-num">3 files</span>
+              <i class="ph ph-caret-right" style="font-size:12px;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- About Me -->
+        <div class="card card-about" onclick="location.href='about/'" style="cursor:pointer;">
+          <i class="ph ph-arrow-up-right card-arrow"></i>
+          <div class="card-icon-badge"><i class="ph ph-user-circle"></i></div>
+          <p class="card-label">Background</p>
+          <h2 class="card-title">About Me</h2>
+          <p class="card-desc">Electronics engineering discipline applied to high-velocity e-commerce and logistics operations.</p>
+          <div class="about-illustration">
+            <i class="ph ph-circuitry"></i>
+          </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="card card-testimonials" onclick="location.href='testimonials/'" style="cursor:pointer;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div class="card-icon-badge"><i class="ph ph-chat-circle-dots"></i></div>
+            <i class="ph ph-arrow-up-right card-arrow"></i>
+          </div>
+          <p class="card-label">Social Proof</p>
+          <h2 class="card-title">Testimonials</h2>
+          <div class="testimonial-quote">
+            <p>"Riovic's automation work transformed our store. Orders now process themselves — we barely touch the backend anymore."</p>
+            <div class="testimonial-author">
+              <div class="t-avatar">C1</div>
+              <div><p class="t-name">Client 1</p><p class="t-role">DTC Brand Founder</p></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;">
+            <a href="testimonials/" style="font-size:12px; font-weight:700; color:var(--isabelline); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">Read all testimonials <i class="ph ph-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="card card-contact" onclick="location.href='contact/'" style="cursor:pointer;">
+          <div class="card-icon-badge"><i class="ph ph-paper-plane-tilt"></i></div>
+          <h2 class="card-title">Contact Me</h2>
+          <p class="card-desc">Let's build scalable automations together.</p>
+          <span class="contact-btn">Say Hello <i class="ph ph-hand-waving"></i></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/feed-data.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const feed = getFeed();
+      const container = document.getElementById('homeFeed');
+      if (container && feed) {
+        container.innerHTML = feed.slice(0, 4).map(item => `
+          <div class="feed-item">
+            <div class="feed-dot" style="background:${item.accent ? 'var(--isabelline)' : 'var(--hunter)'}"></div>
+            <div style="flex:1;">
+              <p class="feed-date">${item.date}</p>
+              <p class="feed-text">${item.text}</p>
+              <span class="feed-tag">${item.tag}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>

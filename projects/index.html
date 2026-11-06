@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects &amp; Case Studies — Riovic Matthew G. Susas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .filter-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+      margin-bottom: 24px;
+    }
+    .filter-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--white);
+      border: 1.5px solid var(--warm1);
+      color: var(--linen);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .filter-pill:hover, .filter-pill.active {
+      background: var(--hunter);
+      color: #FFFFFF;
+      border-color: var(--hunter);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <button class="hamburger" id="hamburger" aria-label="Open menu"><i class="ph ph-list"></i></button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="profile-pic-wrap">
+      <img src="../images/susas_profilepic.jpg" alt="Riovic Matthew G. Susas">
+    </div>
+    <p class="profile-name">Riovic Matthew<br>G. Susas</p>
+    <div class="socials">
+      <a href="mailto:riovic.susas@gmail.com" title="Gmail"><i class="ph ph-envelope-simple"></i><span>Gmail</span></a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="ph ph-linkedin-logo"></i><span>LinkedIn</span></a>
+      <a href="#" title="WhatsApp"><i class="ph ph-whatsapp-logo"></i><span>WhatsApp</span></a>
+      <a href="#" title="Upwork"><i class="ph ph-briefcase"></i><span>Upwork</span></a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <ul class="nav" id="nav">
+      <li><a href="../" class="nav-link"><i class="ph ph-house-simple"></i> <span>Home</span></a></li>
+      <li><a href="../projects/" class="nav-link active"><i class="ph ph-folder-open"></i> <span>Projects</span></a></li>
+      <li><a href="../about/" class="nav-link"><i class="ph ph-user-circle"></i> <span>About Me</span></a></li>
+      <li><a href="../testimonials/" class="nav-link"><i class="ph ph-chat-circle-dots"></i> <span>Testimonials</span></a></li>
+      <li><a href="../latest/" class="nav-link"><i class="ph ph-newspaper"></i> <span>Latest</span></a></li>
+      <li><a href="../contact/" class="nav-link"><i class="ph ph-paper-plane-tilt"></i> <span>Contact</span></a></li>
+    </ul>
+    <p class="sidebar-footer">&copy; 2026 Riovic Matthew G. Susas<br>All rights reserved.</p>
+  </aside>
+
+  <!-- ══════════════════════════ MAIN ══════════════════════════ -->
+  <main class="main" id="mainContent">
+
+    <!-- MAIN PROJECTS VIEW -->
+    <div id="projectsMainView">
+      <div class="section-header">
+        <h2>Technical Operations &amp; Engineering Case Studies</h2>
+        <p>Curated end-to-end architectures, empirical simulations, and forensic post-mortems across Shopify Plus, 3PL WMS, and Carrier APIs.</p>
+      </div>
+
+      <!-- OPERATIONAL ENVIRONMENT ACCORDION -->
+      <div class="company-dropdown-wrapper" id="companyOverviewDropdown">
+        <button class="company-dropdown-toggle" onclick="toggleCompanyDropdown()" aria-expanded="false" id="companyDropdownBtn">
+          <div class="company-toggle-left">
+            <span class="company-badge"><i class="ph ph-buildings"></i> Production Architecture</span>
+            <span class="company-toggle-name">Target Storefront: Synapse Botanicals (DTC)</span>
+          </div>
+          <div class="company-toggle-right">
+            <span class="company-store-pill"><i class="ph ph-arrow-square-out"></i> synapse-botanicals.myshopify.com</span>
+            <span class="company-caret-btn"><i class="ph ph-caret-down" id="companyCaretIcon"></i></span>
+          </div>
+        </button>
+
+        <div class="company-dropdown-content" id="companyDropdownContent" style="display:none;">
+          <h3 class="company-title">Synapse Botanicals — Enterprise Operational Architecture</h3>
+          <p class="company-desc">High-growth direct-to-consumer health and wellness merchant operating on Shopify Plus. The operational engineering and technical case studies below solve mission-critical failure modes across bi-coastal fulfillment and asynchronous automations.</p>
+
+          <div class="company-details-grid">
+            <div class="company-detail-item">
+              <div class="detail-label"><i class="ph ph-package"></i> Product Catalog Matrix</div>
+              <p><strong>24 Master SKUs</strong> across 3 categories (Nootropic Blends, Adaptogenic Tinctures, Functional Gummies). High average unit volume requiring strict expiration tracking and lot controls.</p>
+            </div>
+            <div class="company-detail-item">
+              <div class="detail-label"><i class="ph ph-chart-line-up"></i> Order Velocity &amp; GMV</div>
+              <p><strong>800–1,200 orders/day</strong> peak volume ($3.2M annual run-rate). High proportion of customer address modifications and coupon combinations requiring automated triage.</p>
+            </div>
+            <div class="company-detail-item">
+              <div class="detail-label"><i class="ph ph-truck"></i> Multi-Node Fulfillment</div>
+              <p>Bi-coastal 3PL warehouse network (<strong>Allentown, PA</strong> &amp; <strong>Reno, NV</strong>) powered by ShipBob WMS with regional carrier routing waterfalls.</p>
+            </div>
+            <div class="company-detail-item">
+              <div class="detail-label"><i class="ph ph-cpu"></i> Integrated Tech Stack</div>
+              <div class="tech-stack-badges">
+                <span class="tech-badge"><img src="../images/icon_shopify.png" class="tech-icon-img" alt="Shopify Plus"> Shopify Plus</span>
+                <span class="tech-badge"><i class="ph ph-arrows-clockwise"></i> Shopify Flow</span>
+                <span class="tech-badge"><img src="../images/icon_shipbob.png" class="tech-icon-img" alt="ShipBob"> ShipBob 3PL WMS</span>
+                <span class="tech-badge"><img src="../images/icon_gorgias.png" class="tech-icon-img" alt="Gorgias"> Gorgias</span>
+                <span class="tech-badge"><img src="../images/icon_matrixify.png" class="tech-icon-img" alt="Matrixify"> Matrixify</span>
+                <span class="tech-badge"><i class="ph ph-browsers"></i> Chrome DevTools</span>
+              </div>
+              <button class="catalog-quickview-btn" id="catalogQuickViewBtn" onclick="toggleCatalogQuickView(event)" aria-expanded="false">
+                <i class="ph ph-table"></i> QuickView 24-SKU Catalog
+              </button>
+            </div>
+          </div>
+
+          <!-- CATALOG QUICKVIEW DRAWER -->
+          <div class="catalog-quickview-drawer" id="catalogQuickViewDrawer" style="display:none;">
+            <div class="quickview-header">
+              <div class="quickview-title"><i class="ph ph-database"></i> Synapse Botanicals — 24-SKU Master Catalog Matrix</div>
+              <button class="quickview-close-btn" onclick="toggleCatalogQuickView(event)"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="quickview-table-wrapper">
+              <table class="quickview-table">
+                <thead>
+                  <tr>
+                    <th>SKU Code</th>
+                    <th>Product &amp; Variant Name</th>
+                    <th>Category</th>
+                    <th>Retail</th>
+                    <th>Gross Margin</th>
+                    <th>Primary Fulfillment Node</th>
+                    <th>Hazard Tier</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>SYN-NB-001</code></td><td>NeuroFocus Alpha (60ct Capsules)</td><td>Nootropic Blends</td><td>$48.00</td><td><span class="margin-pill high">72%</span></td><td>LOC-PA-01 (Allentown)</td><td>Tier 1</td></tr>
+                  <tr><td><code>SYN-NB-002</code></td><td>NeuroFocus PM (60ct Capsules)</td><td>Nootropic Blends</td><td>$48.00</td><td><span class="margin-pill high">70%</span></td><td>LOC-PA-01 (Allentown)</td><td>Tier 1</td></tr>
+                  <tr><td><code>SYN-AT-001</code></td><td>Organic Ashwagandha Tincture (50ml)</td><td>Adaptogenic Tinctures</td><td>$34.00</td><td><span class="margin-pill high">76%</span></td><td>LOC-NV-02 (Reno)</td><td>Tier 2</td></tr>
+                  <tr><td><code>SYN-FG-001</code></td><td>Lion's Mane Gummies (Berry 60ct)</td><td>Functional Gummies</td><td>$32.00</td><td><span class="margin-pill med">68%</span></td><td>LOC-PA-01 / LOC-NV-02</td><td>Tier 1</td></tr>
+                  <tr><td><code>SYN-BD-001</code></td><td>Executive Peak Focus Bundle (3-Pack)</td><td>Product Bundles</td><td>$110.00</td><td><span class="margin-pill high">74%</span></td><td>LOC-PA-01 (Allentown)</td><td>Tier 1</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER PILLS -->
+      <div class="filter-pills-row">
+        <button class="filter-pill active" data-filter="all" onclick="filterProjects('all')">All Case Studies (7)</button>
+        <button class="filter-pill" data-filter="logistics" onclick="filterProjects('logistics')">Logistics &amp; 3PL (2)</button>
+        <button class="filter-pill" data-filter="automations" onclick="filterProjects('automations')">Automations &amp; Flow (3)</button>
+        <button class="filter-pill" data-filter="data" onclick="filterProjects('data')">Data &amp; Catalog (1)</button>
+        <button class="filter-pill" data-filter="diagnostics" onclick="filterProjects('diagnostics')">Diagnostics &amp; Margin (1)</button>
+      </div>
+
+      <!-- 21ST.DEV CURATED PROJECT CARDS GRID -->
+      <div class="projects-curated-grid" id="projectsGrid"></div>
+    </div>
+
+    <!-- IN-DEPTH DELIVERABLE & DEFENSE CONTAINER -->
+    <div id="deliverableDetailContainer" style="display:none;"></div>
+
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/projects-data.js"></script>
+  <script src="../js/flagship-data.js"></script>
+  <script src="../js/projects.js"></script>
+</body>
+</html>
